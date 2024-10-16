@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "948001884831",
+    "project_id": "secretchat-a3a41",
+    "storage_bucket": "secretchat-a3a41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948001884831:android:726f7f1a387c36707a70aa",
+        "android_client_info": {
+          "package_name": "com.joseruiz.secret_chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDab_gbTgzfzrF6R2AnuACSzBpihsPy10U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
