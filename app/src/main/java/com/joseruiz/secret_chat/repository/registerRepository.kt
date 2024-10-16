@@ -3,6 +3,7 @@ package com.joseruiz.secret_chat.repository
 import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 
@@ -10,7 +11,9 @@ fun register(email: String, password: String, confirmPassword: String, navContro
     if (email.trim().isNotEmpty() && password.trim().isNotEmpty() && confirmPassword.trim().isNotEmpty() && password == confirmPassword) {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) navController.navigate("login")
+                if (task.isSuccessful)
+                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    navController.navigate("login")
             }
             .addOnFailureListener { exception ->
                 // Captura el error de Firebase y muestra un mensaje de alerta con el error específico

@@ -26,6 +26,12 @@ class MainActivity : ComponentActivity() {
                     composable(route = "register") {
                         RegisterScreen(navController = navController)
                     }
+                    composable(route = "contacts") {
+                        ContactsScreen(navController = navController)
+                    }
+                    composable(route = "chat") {
+                        ChatScreen(navController = navController)
+                    }
                 }
             }
         }

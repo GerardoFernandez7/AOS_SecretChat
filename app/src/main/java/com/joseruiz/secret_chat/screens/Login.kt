@@ -152,7 +152,7 @@ fun LoginScreen(navController: NavController) {
                             isLoading = false
                             if (result != null) {
                                 Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                                navController.navigate("home")
+                                navController.navigate("contacts")
                             } else {
                                 Toast.makeText(context, "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
                             }
