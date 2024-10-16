@@ -7,7 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.joseruiz.secret_chat.screens.ChatScreen
+import com.joseruiz.secret_chat.screens.Contact
+import com.joseruiz.secret_chat.screens.ContactListView
 import com.joseruiz.secret_chat.screens.LoginScreen
+import com.joseruiz.secret_chat.screens.Message
 import com.joseruiz.secret_chat.screens.RegisterScreen
 import com.joseruiz.secret_chat.ui.theme.Secret_ChatTheme
 
@@ -27,10 +31,21 @@ class MainActivity : ComponentActivity() {
                         RegisterScreen(navController = navController)
                     }
                     composable(route = "contacts") {
-                        ContactsScreen(navController = navController)
+                        ContactListView(contacts = listOf(
+                            Contact("Alice"),
+                            Contact("Bob"),
+                            Contact("Charlie")
+                        ))
                     }
                     composable(route = "chat") {
-                        ChatScreen(navController = navController)
+                        ChatScreen(
+                            messages = listOf(
+                                Message("Hola", true),
+                                Message("¿Cómo estás?", false),
+                                Message("Bien, ¿y tú?", true),
+                                Message("Todo bien, gracias", false)
+                            )
+                        )
                     }
                 }
             }

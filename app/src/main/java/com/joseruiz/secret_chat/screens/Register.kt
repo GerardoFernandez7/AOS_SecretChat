@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,15 +26,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.joseruiz.secret_chat.R
 import com.joseruiz.secret_chat.repository.register
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController) {
-    //var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    //var age by remember { mutableStateOf("") }
-    //var gender by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope() // Crear un scope de corrutina
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -44,7 +44,7 @@ fun RegisterScreen(navController: NavController) {
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .align(Alignment.TopCenter)
-                .padding(bottom = 60.dp) // Aumentar el espacio inferior
+                .padding(bottom = 60.dp)
         )
         Column(
             modifier = Modifier
@@ -56,7 +56,6 @@ fun RegisterScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp, bottom = 50.dp),
-
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -79,46 +78,29 @@ fun RegisterScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-
             Text(
                 text = "Ingresa los siguientes datos",
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(bottom = 16.dp)
-                    .align(Alignment.Start) // Alinear a la izquierda
-                    .padding(bottom = 10.dp) // Aumentar el espacio inferior
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .align(Alignment.Start)
+                    .padding(bottom = 10.dp)
             )
 
-            /*
-            // Campos de entrada
-            OutlinedTextField (
-                value = username,
-                onValueChange = { newUsername ->
-                    username = newUsername
-                },
-                label = { Text("Nombre de usuario") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )*/
-
-            OutlinedTextField (
+            OutlinedTextField(
                 value = email,
-                onValueChange = { newEmail ->
-                    email = newEmail
-                },
+                onValueChange = { newEmail -> email = newEmail },
                 label = { Text("Correo electrónico") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
 
-            OutlinedTextField (
+            OutlinedTextField(
                 value = password,
-                onValueChange = {  newPassword ->
-                    password = newPassword
-                },
+                onValueChange = { newPassword -> password = newPassword },
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
@@ -126,11 +108,9 @@ fun RegisterScreen(navController: NavController) {
                     .padding(vertical = 8.dp)
             )
 
-            OutlinedTextField (
+            OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { newConfirmPassword ->
-                    confirmPassword = newConfirmPassword
-                },
+                onValueChange = { newConfirmPassword -> confirmPassword = newConfirmPassword },
                 label = { Text("Confirmar Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
@@ -138,34 +118,17 @@ fun RegisterScreen(navController: NavController) {
                     .padding(vertical = 8.dp)
             )
 
-            /*
-            OutlinedTextField (
-                value = "",
-                onValueChange = { /* TODO */ },
-                label = { Text("Edad") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
-
-            OutlinedTextField (
-                value = "",
-                onValueChange = { /* TODO */ },
-                label = { Text("Género") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
-
-             */
-
             Spacer(modifier = Modifier.height(60.dp))
 
             val context = LocalContext.current
-            // Botón de registro
             Button(
-                onClick = { register(email, password, confirmPassword, navController, context) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF78203A)), // Color del botón
+                onClick = {
+                    // Llamar a la función suspendida dentro de una corrutina
+                    coroutineScope.launch {
+                        register(email, password, confirmPassword, navController, context)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF78203A)),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -181,6 +144,7 @@ fun RegisterScreen(navController: NavController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

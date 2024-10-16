@@ -1,4 +1,6 @@
 package com.joseruiz.secret_chat.data
 
-class User {
-}
+data class User(
+    val email: String = "",
+    val password: String = ""
+)
