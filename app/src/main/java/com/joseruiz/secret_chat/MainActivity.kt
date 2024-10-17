@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.joseruiz.secret_chat.screens.ChatScreen
-import com.joseruiz.secret_chat.screens.Contact
 import com.joseruiz.secret_chat.screens.ContactListView
 import com.joseruiz.secret_chat.screens.LoginScreen
 import com.joseruiz.secret_chat.screens.Message
@@ -31,11 +30,7 @@ class MainActivity : ComponentActivity() {
                         RegisterScreen(navController = navController)
                     }
                     composable(route = "contacts") {
-                        ContactListView(contacts = listOf(
-                            Contact("Alice"),
-                            Contact("Bob"),
-                            Contact("Charlie")
-                        ))
+                        ContactListView()
                     }
                     composable(route = "chat") {
                         ChatScreen(

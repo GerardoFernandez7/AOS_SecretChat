@@ -53,7 +53,7 @@ fun ChatScreen(messages: List<Message>) {
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Image(
-                            painter = painterResource(R.drawable.user), // Cambia por tu recurso
+                            painter = painterResource(R.drawable.user),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(40.dp)
@@ -77,7 +77,7 @@ fun ChatScreen(messages: List<Message>) {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(Color(0xFFEDEDED)), // Fondo claro similar al de WhatsApp
+                .background(Color(0xFFEDEDED)),
             contentPadding = PaddingValues(8.dp)
         ) {
 
@@ -139,7 +139,7 @@ fun ChatInputBar() {
                 .padding(8.dp)
                 .background(Color(0xFFF0F0F0), CircleShape)
                 .padding(horizontal = 16.dp, vertical = 12.dp)
-                .focusRequester(focusRequester),  // Asigna el requester de foco
+                .focusRequester(focusRequester),
             decorationBox = { innerTextField ->
                 if (text.isEmpty()) {
                     Text("Escribe un mensaje...", color = Color.Gray)
@@ -168,18 +168,4 @@ fun ChatInputBar() {
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewChatScreen() {
-    ChatScreen(
-        messages = listOf(
-            Message("Hola", true),
-            Message("¿Cómo estás?", false),
-            Message("Bien, ¿y tú?", true),
-            Message("Todo bien, gracias", false),
-            Message("Igual", true)
-        )
-    )
 }

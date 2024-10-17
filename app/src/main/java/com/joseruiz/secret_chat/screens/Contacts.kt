@@ -17,23 +17,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joseruiz.secret_chat.R
 import androidx.compose.animation.animateColorAsState
+import com.joseruiz.secret_chat.data.User
+import com.joseruiz.secret_chat.repository.getAllUsers
+import kotlinx.coroutines.launch
 
-
-data class Contact(val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactListView(contacts: List<Contact>) {
-    // Agregamos una animación simple para cambiar el color de fondo al interactuar
+fun ContactListView() {
+    var contacts by remember { mutableStateOf<List<User>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) } // Estado de carga
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            contacts = getAllUsers()
+            isLoading = false
+        }
+    }
+
     var isScrolled by remember { mutableStateOf(false) }
 
     val backgroundColor by animateColorAsState(
@@ -47,7 +56,7 @@ fun ContactListView(contacts: List<Contact>) {
                 title = {
                     Text(
                         "Contactos",
-                        color = White // Texto en blanco
+                        color = Color.White // Texto en blanco
                     )
                 },
                 navigationIcon = {
@@ -57,7 +66,7 @@ fun ContactListView(contacts: List<Contact>) {
                         modifier = Modifier
                             .clickable { /* Acción al regresar */ }
                             .padding(16.dp),
-                        tint = White // Ícono en blanco
+                        tint = Color.White // Ícono en blanco
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -67,22 +76,27 @@ fun ContactListView(contacts: List<Contact>) {
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(contacts) { contact ->
-                    ContactRow(contact)
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(contacts) { contact ->
+                        ContactRow(contact)
+                    }
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun ContactRow(contact: Contact) {
+    fun ContactRow(contact: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -101,7 +115,7 @@ fun ContactRow(contact: Contact) {
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             Text(
-                text = contact.name,
+                text = contact.email,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = Color.Black
@@ -114,15 +128,4 @@ fun ContactRow(contact: Contact) {
         }
     }
     Divider(color = Color.Gray, thickness = 0.5.dp)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewContactListView() {
-    val previewContacts = listOf(
-        Contact("Alice"),
-        Contact("Bob"),
-        Contact("Charlie")
-    )
-    ContactListView(contacts = previewContacts)
 }
