@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.animation:animation-android:1.6.6@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/transforms-4/fd45dc6b01ae85bdd8f712d0d79ec2d6/transformed/animation-release/AndroidManifest.xml" />
-      <root url="jar://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/transforms-4/fd45dc6b01ae85bdd8f712d0d79ec2d6/transformed/animation-release/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/transforms-4/fd45dc6b01ae85bdd8f712d0d79ec2d6/transformed/animation-release/res" />
+      <root url="jar://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/transforms-4/fd45dc6b01ae85bdd8f712d0d79ec2d6/transformed/animation-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/transforms-4/fd45dc6b01ae85bdd8f712d0d79ec2d6/transformed/animation-release/res" />
+      <root url="file://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/transforms-4/fd45dc6b01ae85bdd8f712d0d79ec2d6/transformed/animation-release/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/modules-2/files-2.1/androidx.compose.animation/animation-android/1.6.6/22e0eb3f955b01f383e6f7cda43646b887cc0f37/animation-android-1.6.6-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/modules-2/files-2.1/androidx.compose.animation/animation-android/1.6.6/22e0eb3f955b01f383e6f7cda43646b887cc0f37/animation-android-1.6.6-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

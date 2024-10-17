@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.ui:ui-graphics-android:1.6.6@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/transforms-4/4a8c248e38c0c9018848d7168286ba8c/transformed/ui-graphics-release/res" />
-      <root url="file://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/transforms-4/4a8c248e38c0c9018848d7168286ba8c/transformed/ui-graphics-release/AndroidManifest.xml" />
-      <root url="jar://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/transforms-4/4a8c248e38c0c9018848d7168286ba8c/transformed/ui-graphics-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/transforms-4/4a8c248e38c0c9018848d7168286ba8c/transformed/ui-graphics-release/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/transforms-4/4a8c248e38c0c9018848d7168286ba8c/transformed/ui-graphics-release/res" />
+      <root url="jar://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/transforms-4/4a8c248e38c0c9018848d7168286ba8c/transformed/ui-graphics-release/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../Programas/Lab4_Compose/App2/caches/modules-2/files-2.1/androidx.compose.ui/ui-graphics-android/1.6.6/1298b90ac426648ecdcf197c8b1cfe137b7c433f/ui-graphics-android-1.6.6-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Labs/CalculadoraUI-Lab3/Calculadora/gradle/caches/modules-2/files-2.1/androidx.compose.ui/ui-graphics-android/1.6.6/1298b90ac426648ecdcf197c8b1cfe137b7c433f/ui-graphics-android-1.6.6-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

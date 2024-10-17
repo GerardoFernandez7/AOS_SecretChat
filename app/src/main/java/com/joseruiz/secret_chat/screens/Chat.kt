@@ -39,8 +39,6 @@ import com.joseruiz.secret_chat.data.Message
 import com.joseruiz.secret_chat.viewModel.buscarChatPorId
 import com.joseruiz.secret_chat.viewModel.sendMessage
 
-
-var messagesChat: List<Message> = listOf()
 var emailLoged: String = ""
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,7 +107,7 @@ fun ChatScreen(email: String) {
             )
         },
         bottomBar = {
-            ChatInputBar(idChat, emailLoged, messagesChat)  // Pasa messagesChat aquí
+            ChatInputBar(idChat, emailLoged, messagesChat)
         }
     ) { paddingValues ->
         LazyColumn(
@@ -292,5 +290,3 @@ fun ChatInputBar(idChat: String, isSentByUser: String, messagesChat: SnapshotSta
         focusRequester.requestFocus()
     }
 }
-
-
