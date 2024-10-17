@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/AOS_SecretChat.iml" filepath="$PROJECT_DIR$/.idea/AOS_SecretChat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Secret_Chat.iml" filepath="$PROJECT_DIR$/.idea/modules/Secret_Chat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Secret_Chat.app.unitTest.iml" />
     </modules>
   </component>
 </project>
