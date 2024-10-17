@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.joseruiz.secret_chat.data.Chat
 import com.joseruiz.secret_chat.data.Message
+import kotlin.experimental.xor
 
 
 fun buscarChatPorId(idChat: String, pin: String, onResult: (List<Message>) -> Unit) {
@@ -88,7 +89,7 @@ fun sendMessage(idChat: String, messageText: String, isSentByUser: String) {
         .addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 val chat = document.toObject(Chat::class.java)
-                val newMessage = Message(text = messageText, sentByUser = isSentByUser)
+                val newMessage = encryptMessage( Message(text = messageText, sentByUser = isSentByUser),chat.pin)
                 if (chat != null) {
                     val updatedMessages = chat.messages.toMutableList()
                     updatedMessages.add(newMessage)
@@ -112,13 +113,49 @@ fun sendMessage(idChat: String, messageText: String, isSentByUser: String) {
 }
 
 
-private fun encryptMessage(message: String, key: String): String {
+fun encryptMessage(message: Message, key: String): Message {
+    val keyBytes = key.toByteArray()
 
-    return message // Cambia esto por el mensaje encriptado
+    // Convierte el texto del mensaje en bytes
+    val textBytes = message.text.toByteArray()
+
+    // Aplica XOR con los bytes de la clave
+    val encryptedText = textBytes.mapIndexed { index, byte ->
+        byte xor keyBytes[index % keyBytes.size]
+    }.toByteArray()
+
+    // Codifica el texto encriptado en Base64
+    val encodedText = android.util.Base64.encodeToString(encryptedText, android.util.Base64.DEFAULT)
+
+    // Retorna un nuevo objeto Message con el texto encriptado
+    return Message(
+        text = encodedText,
+        sentByUser = message.sentByUser
+    )
 }
 
-fun decryptMessage(encryptedMessage: String, key: String): String {
+fun decryptMessage(encryptedMessages: List<Message>, key: String): List<Message> {
+    val keyBytes = key.toByteArray()
+    val decryptedMessages = mutableListOf<Message>()
 
-    return encryptedMessage // Cambia esto por el mensaje desencriptado
+    encryptedMessages.forEach { message ->
+        val encryptedBytes = android.util.Base64.decode(message.text, android.util.Base64.DEFAULT)
+
+        val decryptedText = encryptedBytes.mapIndexed { index, byte ->
+            byte xor keyBytes[index % keyBytes.size]
+        }.toByteArray()
+
+        // Convierte los bytes desencriptados en texto legible
+        val decryptedString = String(decryptedText)
+
+        // Crea un nuevo mensaje con el texto desencriptado
+        decryptedMessages.add(
+            Message(
+                text = decryptedString,
+                sentByUser = message.sentByUser
+            )
+        )
+    }
+    return decryptedMessages
 }
 

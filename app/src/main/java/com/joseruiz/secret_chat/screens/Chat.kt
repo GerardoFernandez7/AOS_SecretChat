@@ -173,7 +173,7 @@ fun PinDialog(idChat: String, pin: String, onPinChange: (String) -> Unit, onConf
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(onClick = {
-                    onConfirm()  // Aquí se llama al callback de confirmación
+                    onConfirm()
                 }) {
                     Text(text = "Aceptar")
                 }
