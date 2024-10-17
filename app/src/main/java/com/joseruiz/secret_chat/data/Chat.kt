@@ -4,4 +4,6 @@ data class Chat(
     val idChat: String = "",
     val pin: String = "",
     val messages: List<Message> = listOf()
-)
+){
+    constructor() : this("", "", listOf())
+}

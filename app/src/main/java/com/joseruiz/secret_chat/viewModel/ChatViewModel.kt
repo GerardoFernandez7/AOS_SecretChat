@@ -9,28 +9,32 @@ import com.joseruiz.secret_chat.data.Chat
 import com.joseruiz.secret_chat.data.Message
 
 
-fun buscarChatPorId(idChat: String, pin: String): List<Message> {
+fun buscarChatPorId(idChat: String, pin: String, onResult: (List<Message>) -> Unit) {
     val db = FirebaseFirestore.getInstance()
-    var messagesChat: List<Message> = listOf()
+
     db.collection("chats")
         .whereEqualTo("idChat", idChat)
         .get()
         .addOnSuccessListener { querySnapshot: QuerySnapshot ->
             if (!querySnapshot.isEmpty) {
-                messagesChat = createChat(idChat,true, pin)
+                createChat(idChat, true, pin) { messages ->
+                    onResult(messages) // Retorna la lista de mensajes obtenidos
+                }
             } else {
-                messagesChat = createChat(idChat,false, pin)
+                createChat(idChat, false, pin) { messages ->
+                    onResult(messages) // Retorna la lista de mensajes de un nuevo chat
+                }
             }
         }
         .addOnFailureListener { exception ->
             Log.w("Firebase", "Error buscando chat", exception)
+            onResult(listOf()) // Devuelve una lista vacía en caso de error
         }
-        return messagesChat
 }
 
-fun createChat(idChat: String, exists: Boolean, pin: String): List<Message>{
+fun createChat(idChat: String, exists: Boolean, pin: String, onResult: (List<Message>) -> Unit) {
     val db = FirebaseFirestore.getInstance()
-    if (!exists){// Si no existe el chat
+    if (!exists) { // Si no existe el chat
         val newChat = Chat(
             idChat = idChat,
             pin = pin,
@@ -41,19 +45,20 @@ fun createChat(idChat: String, exists: Boolean, pin: String): List<Message>{
             .set(newChat)
             .addOnSuccessListener {
                 Log.d("Firebase", "Chat creado con éxito")
+                onResult(newChat.messages) // Retorna los mensajes del nuevo chat
             }
             .addOnFailureListener { exception ->
                 Log.w("Firebase", "Error al crear el chat", exception)
+                onResult(listOf()) // Devuelve una lista vacía en caso de error
             }
-        return newChat.messages
-    }else{// Si existe el chat entonces se obtiene la data
-        var messagesChat: List<Message> = listOf()
-        getChatById(idChat){ chat ->
+    } else { // Si existe el chat, entonces se obtiene la data
+        getChatById(idChat) { chat ->
             if (chat != null) {
-                messagesChat = chat.messages
+                onResult(chat.messages) // Retorna los mensajes del chat existente
+            } else {
+                onResult(listOf()) // Devuelve una lista vacía si el chat no se encontró
             }
         }
-        return messagesChat
     }
 }
 
@@ -66,9 +71,15 @@ fun getChatById(idChat: String, onResult: (Chat?) -> Unit) {
             if (document != null && document.exists()) {
                 val chat = document.toObject(Chat::class.java)
                 onResult(chat)
+            } else {
+                onResult(null) // Devuelve null si no se encontró el chat
             }
         }
+        .addOnFailureListener {
+            onResult(null) // Devuelve null en caso de error
+        }
 }
+
 
 fun sendMessage(idChat: String, messageText: String, isSentByUser: String) {
     val db = FirebaseFirestore.getInstance()
@@ -77,7 +88,7 @@ fun sendMessage(idChat: String, messageText: String, isSentByUser: String) {
         .addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 val chat = document.toObject(Chat::class.java)
-                val newMessage = Message(text = messageText, isSentByUser = isSentByUser)
+                val newMessage = Message(text = messageText, sentByUser = isSentByUser)
                 if (chat != null) {
                     val updatedMessages = chat.messages.toMutableList()
                     updatedMessages.add(newMessage)

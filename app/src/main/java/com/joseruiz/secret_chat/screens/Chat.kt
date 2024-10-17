@@ -1,5 +1,6 @@
 package com.joseruiz.secret_chat.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,20 +39,19 @@ import com.joseruiz.secret_chat.viewModel.sendMessage
 
 
 var messagesChat: List<Message> = listOf()
-
+var emailLoged: String = ""
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(email: String) {
     // Se captura el usuario logeado
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
     val currentUser: FirebaseUser? = auth.currentUser
-    var emailLoged: String = ""
-    if (currentUser != null) {
-        emailLoged = currentUser.email.toString()
-    } else {
-        println("Ningún usuario ha iniciado sesión")
-    }
+    emailLoged = currentUser?.email.toString()
 
+    // Estado para los mensajes
+    val messagesChat = remember { mutableStateListOf<Message>() }
+
+    // Generar el idChat
     val idChat = generateChatId(emailLoged, email)
 
     // Estado para controlar si el modal del PIN está visible
@@ -98,28 +98,26 @@ fun ChatScreen(email: String) {
                 .background(Color(0xFFEDEDED)),
             contentPadding = PaddingValues(8.dp)
         ) {
-            // Aquí irían los mensajes del chat
-
-            /*
-            var messages = listOf(
-                Message("Hola", "rui23719@uvg.edu.gt"),
-                Message("¿Cómo estás?", "fer23763@uvg.edu.gt"),
-                Message("Bien, ¿y tú?", "rui23719@uvg.edu.gt"),
-                Message("Todo bien, gracias", "fer23763@uvg.edu.gt"),
-                Message("Igual", "rui23719@uvg.edu.gt")
-            )*/
 
             items(messagesChat) { message ->
+                Log.d("ChatScreen", "Mensaje: ${message.text}, Enviado por: ${message.sentByUser}")
+                Log.d("ChatScreen", "Email logeado: $emailLoged")
+
                 ChatBubble(message, emailLoged)
             }
-
         }
     }
 
     // Mostrar el dialog para solicitar el PIN sobre la pantalla del chat
     if (showPinDialog) {
-        PinDialog(idChat= idChat, pin = pin, onPinChange = { pin = it }, onConfirm = {
-            showPinDialog = false
+        PinDialog(idChat = idChat, pin = pin, onPinChange = { pin = it }, onConfirm = {
+            // Llamada asíncrona para buscar mensajes
+            buscarChatPorId(idChat, pin) { messages ->
+                // Actualizar la lista de mensajes cuando se obtienen del servidor
+                messagesChat.clear()
+                messagesChat.addAll(messages)
+                showPinDialog = false
+            }
         })
     }
 }
@@ -154,8 +152,7 @@ fun PinDialog(idChat: String, pin: String, onPinChange: (String) -> Unit, onConf
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(onClick = {
-                    messagesChat = buscarChatPorId(idChat, pin)
-                    onConfirm()
+                    onConfirm()  // Aquí se llama al callback de confirmación
                 }) {
                     Text(text = "Aceptar")
                 }
@@ -163,6 +160,8 @@ fun PinDialog(idChat: String, pin: String, onPinChange: (String) -> Unit, onConf
         }
     }
 }
+
+
 
 fun generateChatId(email1: String, email2: String): String {
     return if (email1.compareTo(email2) <= 0) {
@@ -172,22 +171,23 @@ fun generateChatId(email1: String, email2: String): String {
     }
 }
 
+
 @Composable
 fun ChatBubble(message: Message, userLoged: String) {
-    val alignment = if (message.isSentByUser == userLoged) Alignment.End else Alignment.Start
-    val backgroundColor = if (message.isSentByUser == userLoged) Color(0xFFE1FFC7) else Color.White
-    val textColor = if (message.isSentByUser == userLoged) Color.Black else Color.Black
+    val isCurrentUser = message.sentByUser == userLoged
+    val alignment = if (isCurrentUser) Alignment.End else Alignment.Start
+    val backgroundColor = if (isCurrentUser) Color(0xFFE1FFC7) else Color.White
+    val textColor = if (isCurrentUser) Color.Black else Color.Black
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = if (message.isSentByUser == userLoged) Arrangement.End else Arrangement.Start
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
     ) {
         Box(
             modifier = Modifier
                 .background(backgroundColor)
                 .padding(8.dp)
-                .widthIn(max = 250.dp) // Limitar el ancho de los mensajes
+                .widthIn(max = 250.dp)
         ) {
             Text(
                 text = message.text,
@@ -198,6 +198,7 @@ fun ChatBubble(message: Message, userLoged: String) {
     }
     Spacer(modifier = Modifier.height(4.dp))
 }
+
 
 @Composable
 fun ChatInputBar(idChat: String, isSentByUser: String) {
