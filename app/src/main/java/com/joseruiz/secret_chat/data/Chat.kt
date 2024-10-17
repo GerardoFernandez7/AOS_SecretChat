@@ -1,6 +1,7 @@
 package com.joseruiz.secret_chat.data
 
 data class Chat(
-    val messages: List<String>,
-    val users: List<User>
+    val user1: User,
+    val user2: User,
+    val messages: List<Message>
 )

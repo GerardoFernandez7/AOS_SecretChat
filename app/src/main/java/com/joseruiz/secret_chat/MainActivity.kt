@@ -33,14 +33,7 @@ class MainActivity : ComponentActivity() {
                         ContactListView()
                     }
                     composable(route = "chat") {
-                        ChatScreen(
-                            messages = listOf(
-                                Message("Hola", true),
-                                Message("¿Cómo estás?", false),
-                                Message("Bien, ¿y tú?", true),
-                                Message("Todo bien, gracias", false)
-                            )
-                        )
+                        ChatScreen()
                     }
                 }
             }

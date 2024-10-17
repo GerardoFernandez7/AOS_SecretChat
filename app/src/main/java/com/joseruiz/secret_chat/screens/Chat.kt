@@ -34,12 +34,27 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.ViewModel
+import com.joseruiz.secret_chat.data.Message
+import com.joseruiz.secret_chat.data.User
+import com.joseruiz.secret_chat.repository.getAllUsers
+import com.joseruiz.secret_chat.viewModel.ChatViewModel
+import kotlinx.coroutines.launch
 
-data class Message(val text: String, val isSentByUser: Boolean)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(messages: List<Message>) {
+fun ChatScreen() {
+    var messages by remember { mutableStateOf<List<Message>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+    val chatViewModel: ChatViewModel
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            //messages = chatViewModel.getChatByUsers("jose", "alez")
+
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
