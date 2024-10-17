@@ -1,7 +1,5 @@
 package com.joseruiz.secret_chat.screens
 
-import android.provider.ContactsContract.CommonDataKinds.Email
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.joseruiz.secret_chat.data.Message
 import com.joseruiz.secret_chat.viewModel.buscarChatPorId
+import com.joseruiz.secret_chat.viewModel.sendMessage
 
 
 var messagesChat: List<Message> = listOf()
@@ -89,7 +88,7 @@ fun ChatScreen(email: String) {
             )
         },
         bottomBar = {
-            ChatInputBar()
+            ChatInputBar(idChat, emailLoged)
         }
     ) { paddingValues ->
         LazyColumn(
@@ -201,7 +200,7 @@ fun ChatBubble(message: Message, userLoged: String) {
 }
 
 @Composable
-fun ChatInputBar() {
+fun ChatInputBar(idChat: String, isSentByUser: String) {
     var text by remember { mutableStateOf("") }
 
     // Control del foco
@@ -236,14 +235,19 @@ fun ChatInputBar() {
             ),
             keyboardActions = KeyboardActions(
                 onSend = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
+                    sendMessage(idChat, text, isSentByUser)  // Llama a sendMessage
+                    text = ""  // Limpia el campo de texto después de enviar
+                    keyboardController?.hide()  // Esconde el teclado
+                    focusManager.clearFocus()  // Limpia el foco
                 }
             )
         )
         IconButton(onClick = {
-            // Lógica para enviar el mensaje
-            keyboardController?.hide()  // Esconde el teclado después de enviar
+            if (text.isNotBlank()) {
+                sendMessage(idChat, text, isSentByUser)  // Llama a sendMessage
+                text = ""  // Limpia el campo de texto después de enviar
+                keyboardController?.hide()  // Esconde el teclado
+            }
         }) {
             Icon(imageVector = Icons.Default.Send, contentDescription = "Enviar", tint = Color(0xFF128C7E))
         }
@@ -254,3 +258,4 @@ fun ChatInputBar() {
         focusRequester.requestFocus()
     }
 }
+

@@ -70,14 +70,44 @@ fun getChatById(idChat: String, onResult: (Chat?) -> Unit) {
         }
 }
 
+fun sendMessage(idChat: String, messageText: String, isSentByUser: String) {
+    val db = FirebaseFirestore.getInstance()
+    db.collection("chats").document(idChat)
+        .get()
+        .addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                val chat = document.toObject(Chat::class.java)
+                val newMessage = Message(text = messageText, isSentByUser = isSentByUser)
+                if (chat != null) {
+                    val updatedMessages = chat.messages.toMutableList()
+                    updatedMessages.add(newMessage)
+                    val updatedChat = chat.copy(messages = updatedMessages)
+                    db.collection("chats").document(idChat)
+                        .set(updatedChat)
+                        .addOnSuccessListener {
+                            Log.d("Firebase", "Chat actualizado con éxito")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Firebase", "Error al actualizar el chat", e)
+                        }
+                }
+            } else {
+                Log.w("Firebase", "El chat no existe")
+            }
+        }
+        .addOnFailureListener { e ->
+            Log.w("Firebase", "Error al obtener el chat", e)
+        }
+}
+
 
 private fun encryptMessage(message: String, key: String): String {
-    // Aquí puedes implementar el Método del Emperador para encriptar el mensaje
+
     return message // Cambia esto por el mensaje encriptado
 }
 
 fun decryptMessage(encryptedMessage: String, key: String): String {
-    // Implementa la lógica de desencriptación aquí
+
     return encryptedMessage // Cambia esto por el mensaje desencriptado
 }
 
