@@ -10,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import com.joseruiz.secret_chat.screens.ChatScreen
 import com.joseruiz.secret_chat.screens.ContactListView
 import com.joseruiz.secret_chat.screens.LoginScreen
-import com.joseruiz.secret_chat.screens.Message
 import com.joseruiz.secret_chat.screens.RegisterScreen
 import com.joseruiz.secret_chat.ui.theme.Secret_ChatTheme
 
@@ -30,10 +29,13 @@ class MainActivity : ComponentActivity() {
                         RegisterScreen(navController = navController)
                     }
                     composable(route = "contacts") {
-                        ContactListView()
+                        ContactListView(navController = navController)
                     }
-                    composable(route = "chat") {
-                        ChatScreen()
+                    composable(route = "chat/{email}") { backStackEntry ->
+                        val email = backStackEntry.arguments?.getString("email")
+                        if (email != null) {
+                            ChatScreen(email = email)
+                        }
                     }
                 }
             }

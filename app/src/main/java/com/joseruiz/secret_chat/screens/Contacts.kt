@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joseruiz.secret_chat.R
 import androidx.compose.animation.animateColorAsState
+import androidx.navigation.NavController
 import com.joseruiz.secret_chat.data.User
 import com.joseruiz.secret_chat.repository.getAllUsers
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactListView() {
+fun ContactListView(navController: NavController) {
     var contacts by remember { mutableStateOf<List<User>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) } // Estado de carga
     val coroutineScope = rememberCoroutineScope()
@@ -86,7 +87,7 @@ fun ContactListView() {
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
                     items(contacts) { contact ->
-                        ContactRow(contact)
+                        ContactRow(contact, navController)
                     }
                 }
             }
@@ -96,11 +97,11 @@ fun ContactListView() {
 
 
 @Composable
-    fun ContactRow(contact: User) {
+    fun ContactRow(contact: User, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Acción al hacer clic en el contacto */ }
+            .clickable { navController.navigate("chat/${contact.email}") }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

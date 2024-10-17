@@ -1,7 +1,7 @@
 package com.joseruiz.secret_chat.data
 
 data class Chat(
-    val user1: User,
-    val user2: User,
+    val idChat: String,
+    val pin: String,
     val messages: List<Message>
 )
