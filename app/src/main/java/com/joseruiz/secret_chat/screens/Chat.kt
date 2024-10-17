@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +34,7 @@ import androidx.compose.ui.window.Dialog
 import com.joseruiz.secret_chat.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import com.joseruiz.secret_chat.data.Message
 import com.joseruiz.secret_chat.viewModel.buscarChatPorId
 import com.joseruiz.secret_chat.viewModel.sendMessage
@@ -57,6 +59,25 @@ fun ChatScreen(email: String) {
     // Estado para controlar si el modal del PIN está visible
     var showPinDialog by remember { mutableStateOf(true) }
     var pin by remember { mutableStateOf("") }
+
+    // Escuchar cambios en tiempo real en Firebase fuera del diálogo
+    LaunchedEffect(idChat) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("chats").document(idChat)
+            .collection("messages")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.w("ChatScreen", "Error al escuchar cambios en los mensajes", e)
+                    return@addSnapshotListener
+                }
+
+                if (snapshots != null) {
+                    val updatedMessages = snapshots.toObjects(Message::class.java)
+                    messagesChat.clear()
+                    messagesChat.addAll(updatedMessages)
+                }
+            }
+    }
 
     Scaffold(
         topBar = {
@@ -88,7 +109,7 @@ fun ChatScreen(email: String) {
             )
         },
         bottomBar = {
-            ChatInputBar(idChat, emailLoged)
+            ChatInputBar(idChat, emailLoged, messagesChat)  // Pasa messagesChat aquí
         }
     ) { paddingValues ->
         LazyColumn(
@@ -98,7 +119,6 @@ fun ChatScreen(email: String) {
                 .background(Color(0xFFEDEDED)),
             contentPadding = PaddingValues(8.dp)
         ) {
-
             items(messagesChat) { message ->
                 Log.d("ChatScreen", "Mensaje: ${message.text}, Enviado por: ${message.sentByUser}")
                 Log.d("ChatScreen", "Email logeado: $emailLoged")
@@ -111,9 +131,8 @@ fun ChatScreen(email: String) {
     // Mostrar el dialog para solicitar el PIN sobre la pantalla del chat
     if (showPinDialog) {
         PinDialog(idChat = idChat, pin = pin, onPinChange = { pin = it }, onConfirm = {
-            // Llamada asíncrona para buscar mensajes
+            // Llamada asíncrona para buscar mensajes iniciales usando el PIN
             buscarChatPorId(idChat, pin) { messages ->
-                // Actualizar la lista de mensajes cuando se obtienen del servidor
                 messagesChat.clear()
                 messagesChat.addAll(messages)
                 showPinDialog = false
@@ -121,6 +140,8 @@ fun ChatScreen(email: String) {
         })
     }
 }
+
+
 
 @Composable
 fun PinDialog(idChat: String, pin: String, onPinChange: (String) -> Unit, onConfirm: () -> Unit) {
@@ -201,7 +222,7 @@ fun ChatBubble(message: Message, userLoged: String) {
 
 
 @Composable
-fun ChatInputBar(idChat: String, isSentByUser: String) {
+fun ChatInputBar(idChat: String, isSentByUser: String, messagesChat: SnapshotStateList<Message>) {
     var text by remember { mutableStateOf("") }
 
     // Control del foco
@@ -236,18 +257,30 @@ fun ChatInputBar(idChat: String, isSentByUser: String) {
             ),
             keyboardActions = KeyboardActions(
                 onSend = {
-                    sendMessage(idChat, text, isSentByUser)  // Llama a sendMessage
-                    text = ""  // Limpia el campo de texto después de enviar
-                    keyboardController?.hide()  // Esconde el teclado
-                    focusManager.clearFocus()  // Limpia el foco
+                    if (text.isNotBlank()) {
+                        // Crear un nuevo mensaje localmente
+                        val newMessage = Message(text = text, sentByUser = isSentByUser)
+                        messagesChat.add(newMessage)  // Actualizar la lista de mensajes local
+
+                        // Enviar el mensaje a Firebase
+                        sendMessage(idChat, text, isSentByUser)
+                        text = ""  // Limpiar el campo de texto
+                        keyboardController?.hide()  // Esconder el teclado
+                        focusManager.clearFocus()  // Limpiar el foco
+                    }
                 }
             )
         )
         IconButton(onClick = {
             if (text.isNotBlank()) {
-                sendMessage(idChat, text, isSentByUser)  // Llama a sendMessage
-                text = ""  // Limpia el campo de texto después de enviar
-                keyboardController?.hide()  // Esconde el teclado
+                // Crear un nuevo mensaje localmente
+                val newMessage = Message(text = text, sentByUser = isSentByUser)
+                messagesChat.add(newMessage)  // Actualizar la lista de mensajes local
+
+                // Enviar el mensaje a Firebase
+                sendMessage(idChat, text, isSentByUser)
+                text = ""  // Limpiar el campo de texto
+                keyboardController?.hide()  // Esconder el teclado
             }
         }) {
             Icon(imageVector = Icons.Default.Send, contentDescription = "Enviar", tint = Color(0xFF128C7E))
@@ -259,4 +292,5 @@ fun ChatInputBar(idChat: String, isSentByUser: String) {
         focusRequester.requestFocus()
     }
 }
+
 
