@@ -24,18 +24,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joseruiz.secret_chat.R
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.joseruiz.secret_chat.data.User
 import com.joseruiz.secret_chat.repository.getAllUsers
 import kotlinx.coroutines.launch
 
-
+var userLoged: String = ""
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactListView(navController: NavController) {
     var contacts by remember { mutableStateOf<List<User>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) } // Estado de carga
     val coroutineScope = rememberCoroutineScope()
+
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val currentUser: FirebaseUser? = auth.currentUser
+    val userLoged = currentUser?.email.toString() // Asegúrate de que esta variable se defina aquí localmente
+
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -47,9 +55,12 @@ fun ContactListView(navController: NavController) {
     var isScrolled by remember { mutableStateOf(false) }
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isScrolled) Color(0xFF075E54) else Color(0xFF128C7E), // Verde tipo WhatsApp
+        targetValue = if (isScrolled) colorResource(R.color.customMaroon) else colorResource(R.color.customMaroon),
         animationSpec = androidx.compose.animation.core.tween(durationMillis = 600)
     )
+
+    // Filtrar contactos para excluir al usuario logueado
+    val filteredContacts = contacts.filter { it.email != userLoged }
 
     Scaffold(
         topBar = {
@@ -86,7 +97,7 @@ fun ContactListView(navController: NavController) {
                         .padding(top = 8.dp),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    items(contacts) { contact ->
+                    items(filteredContacts) { contact ->
                         ContactRow(contact, navController)
                     }
                 }
@@ -95,9 +106,8 @@ fun ContactListView(navController: NavController) {
     }
 }
 
-
 @Composable
-    fun ContactRow(contact: User, navController: NavController) {
+fun ContactRow(contact: User, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -130,3 +140,4 @@ fun ContactListView(navController: NavController) {
     }
     Divider(color = Color.Gray, thickness = 0.5.dp)
 }
+
